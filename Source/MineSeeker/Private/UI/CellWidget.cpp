@@ -7,6 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "GM_MineSeeker.h"
+#include "Blueprint/WidgetTree.h"
 
 
 void UCellWidget::NativeOnInitialized()
@@ -17,17 +18,37 @@ void UCellWidget::NativeOnInitialized()
 		CellButton->OnClicked.AddDynamic(this, &UCellWidget::OnLeftMouseClicked);
 	}
 
-	if (GetWorld())
+}
+
+
+FReply UCellWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
+	
+	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
-		const auto GameMode = Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode());
-		if (GameMode)
-		{
-			GameMode->OnRightMouseClicked.AddUObject(this, &UCellWidget::OnRightMouseClicked);
-		}
+		UE_LOG(LogTemp, Warning, TEXT("Right mouse was pressed"));
+		OnRightMouseClicked();	
 	}
 
-	
-		
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Left mouse was pressed"));
+		OnRightMouseClicked();
+	}
+
+	return Reply;
+}
+
+FReply UCellWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
+{
+	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry, InMouseEvent);
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Double left mouse was pressed"));
+	}
+
+	return Reply;
 }
 
 void UCellWidget::OnLeftMouseClicked()
@@ -47,10 +68,9 @@ void UCellWidget::SetCellData(const FCellData& Data)
 void UCellWidget::OnRightMouseClicked()
 {
 	
-	if (!CellButton->IsHovered() || !CellData.bClosed) return;
-	UE_LOG(LogTemp, Warning, TEXT("Rigth Mouse Function worked"));
+	if (!CellData.bClosed) return;
+	
 	const auto ChildrenCount = ClosedCellSwitcher->GetChildrenCount();
-	UE_LOG(LogTemp, Warning, TEXT("Children Count %i"), ChildrenCount);
 	const auto CurrentIndex = ClosedCellSwitcher->ActiveWidgetIndex;
 	
 	if (CurrentIndex + 1 <= ChildrenCount - 1)
@@ -84,3 +104,4 @@ void UCellWidget::SetCellBackGround()
 		return;
 	}
 }
+

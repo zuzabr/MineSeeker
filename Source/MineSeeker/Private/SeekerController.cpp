@@ -22,8 +22,7 @@ void ASeekerController::SetupInputComponent()
 
 
 	InputComponent->BindAction("PauseGame", IE_Pressed, this, &ASeekerController::OnPauseGame);
-	InputComponent->BindAction("RightMouseClick", IE_DoubleClick, this, &ASeekerController::OnRMBClicked);	
-	
+			
 }
 
 void ASeekerController::OnPauseGame()
@@ -33,9 +32,3 @@ void ASeekerController::OnPauseGame()
 	GetWorld()->GetAuthGameMode()->SetPause(this);
 }
 
-void ASeekerController::OnRMBClicked()
-{
-	const auto GameMode = Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode());
-	if (!GameMode) return;
-	GameMode->ClickRMB();
-}

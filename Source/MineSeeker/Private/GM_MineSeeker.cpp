@@ -38,7 +38,6 @@ void AGM_MineSeeker::StartGame()
 	}
 
 	OnFullGridUpdateNeeded.Broadcast(true);
-//-------------Вызвать генерацию нового поля------------------
 	SetMatchState(EMatchState::InProgress);
 }
 
@@ -68,7 +67,3 @@ bool AGM_MineSeeker::ClearPause()
 	return PauseCleared;
 }
 
-void AGM_MineSeeker::ClickRMB()
-{
-	OnRightMouseClicked.Broadcast();
-}

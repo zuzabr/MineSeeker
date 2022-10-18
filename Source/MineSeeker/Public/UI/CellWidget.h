@@ -22,9 +22,13 @@ public:
 	
 	void SetCellData(const FCellData& Data);
 	FCellData GetLvlData() const { return CellData; }
+	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 
 protected:
 	virtual void NativeOnInitialized() override;
+
+	
 
 	UPROPERTY(meta = (BindWidget))
 		UButton* CellButton;
