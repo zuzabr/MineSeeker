@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "MineSeekerCoreTypes.h"
 #include "GridWidget.generated.h"
 
 class UUniformGridPanel;
@@ -33,6 +34,7 @@ private:
 		TArray<UCellWidget*> CellWidgets;
 
 	void OnFullGridUpdateNeeded(bool bNeeded); // Создаем функцию под делегат
+	void OnCellOpen(TArray<int32> ArrayIndex);
 	
 			
 };

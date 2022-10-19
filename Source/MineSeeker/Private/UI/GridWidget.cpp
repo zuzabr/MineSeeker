@@ -21,11 +21,14 @@ void UGridWidget::NativeOnInitialized()
 		{
 			GameMode->OnFullGridUpdateNeeded.AddUObject(this, &UGridWidget::OnFullGridUpdateNeeded);
 		}
-
 			
-	}
+	}	
 
-	
+	const auto GameInstance = GetMineSeekerGI();
+	if (GameInstance)
+	{
+		GameInstance->OnOpenCells.AddUObject(this, &UGridWidget::OnCellOpen);
+	}
 			
 }
 
@@ -41,8 +44,10 @@ void UGridWidget::ResetFullMinesGrid()
 
 	if (!MinesGrid) return;
 	MinesGrid->ClearChildren();
+	const auto Data = GameInstance->GetCellsData();
+
 //----------------------¬изуализаци€ массива €чеек----------------------------------------------------
-	for (auto CellData : GameInstance->GetCellsData())
+	for (auto& CellData : GameInstance->GetCellsData())
 	{
 		const auto CellWidget = CreateWidget<UCellWidget>(GetWorld(), CellWidgetClass);
 		if (!CellWidget) continue;
@@ -53,14 +58,11 @@ void UGridWidget::ResetFullMinesGrid()
 		CellWidgets.Add(CellWidget);
 	}
 	SetFocus();
+
+	
 	
 }
 
-UGI_MineSeeker* UGridWidget::GetMineSeekerGI() const
-{
-	if (!GetWorld()) return nullptr;
-	return GetWorld()->GetGameInstance<UGI_MineSeeker>();
-}
 
 void UGridWidget::OnFullGridUpdateNeeded(bool bNeeded)
 {
@@ -69,5 +71,19 @@ void UGridWidget::OnFullGridUpdateNeeded(bool bNeeded)
 
 }
 
+void UGridWidget::OnCellOpen(TArray<int32> ArrayIndex)
+{
+	for (int32& Index : ArrayIndex)
+	{
+		const auto Cell = Cast<UCellWidget>(MinesGrid->GetChildAt(Index));
+		if (!(Cell->GetCellData().bClosed)) continue;
+		Cell->OpenTheCell();
+	}
+	
+}
 
-
+UGI_MineSeeker* UGridWidget::GetMineSeekerGI() const
+{
+	if (!GetWorld()) return nullptr;
+	return GetWorld()->GetGameInstance<UGI_MineSeeker>();
+}

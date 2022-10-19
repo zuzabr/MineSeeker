@@ -18,7 +18,6 @@ void AGM_MineSeeker::SetMatchState(EMatchState State)
 	OnMatchStateChanged.Broadcast(MatchState); // Вызов делегата
 }
 
-
 void AGM_MineSeeker::StartPlay()
 {
 	Super::StartPlay();

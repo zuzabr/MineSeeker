@@ -18,7 +18,7 @@ public:
 
 	FOnMatchStateChangedSignature OnMatchStateChanged; // Добавление делегата
 	FOnFullGridUpdateNeededSignature OnFullGridUpdateNeeded;
-	FOnRMBClickedSignature OnRightMouseClicked;
+	
 	
 
 	

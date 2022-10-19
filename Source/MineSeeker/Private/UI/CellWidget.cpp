@@ -8,18 +8,16 @@
 #include "Components/Image.h"
 #include "GM_MineSeeker.h"
 #include "Blueprint/WidgetTree.h"
-
+#include "GI_MineSeeker.h"
+#include "GM_MineSeeker.h"
 
 void UCellWidget::NativeOnInitialized()
 {
 	Super::NativeOnInitialized();
-	if (CellButton)
-	{
-		CellButton->OnClicked.AddDynamic(this, &UCellWidget::OnLeftMouseClicked);
-	}
 
+	GetMineSeekerGI();
+	check(GameInstance);
 }
-
 
 FReply UCellWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
@@ -27,14 +25,19 @@ FReply UCellWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const F
 	
 	if (InMouseEvent.GetEffectingButton() == EKeys::RightMouseButton)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Right mouse was pressed"));
-		OnRightMouseClicked();	
+		if (CellData.bClosed)
+		{
+			OnRightMouseClicked();
+		}
+			
 	}
 
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Left mouse was pressed"));
-		OnRightMouseClicked();
+		if (CellData.bClosed)
+		{
+			OnLeftMouseClicked();
+		}		
 	}
 
 	return Reply;
@@ -45,7 +48,11 @@ FReply UCellWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, 
 	FReply Reply = Super::NativeOnMouseButtonDoubleClick(InGeometry, InMouseEvent);
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Double left mouse was pressed"));
+		if (!CellData.bClosed)
+		{
+			OnLeftDoubleClick();
+		}
+		
 	}
 
 	return Reply;
@@ -53,33 +60,79 @@ FReply UCellWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, 
 
 void UCellWidget::OnLeftMouseClicked()
 {
+	
 	if (ClosedCellSwitcher->ActiveWidgetIndex == 1) return;
-	CellData.bClosed = false;
-	CellButton->SetVisibility(ESlateVisibility::Hidden);
-}
-
-void UCellWidget::SetCellData(const FCellData& Data)
-{
-	CellData = Data;
-	CellData.bClosed = true;
-	SetCellBackGround();
+	OpenTheCell();
+	
 }
 
 void UCellWidget::OnRightMouseClicked()
 {
-	
-	if (!CellData.bClosed) return;
-	
+
 	const auto ChildrenCount = ClosedCellSwitcher->GetChildrenCount();
 	const auto CurrentIndex = ClosedCellSwitcher->ActiveWidgetIndex;
-	
+
 	if (CurrentIndex + 1 <= ChildrenCount - 1)
 	{
 		ClosedCellSwitcher->SetActiveWidgetIndex(CurrentIndex + 1);
+		if ((CurrentIndex + 1) == 1)
+		{
+			CellData.MarkedAsMine = true;
+			GameInstance->SetCellFlagStatus(CellData.ArrayIndex, true);
+			
+		}
+		else
+		{
+			CellData.MarkedAsMine = false;
+			GameInstance->SetCellFlagStatus(CellData.ArrayIndex, false);
+		}
 	}
 	else
 	{
 		ClosedCellSwitcher->SetActiveWidgetIndex(0);
+		CellData.MarkedAsMine = false;
+		GameInstance->SetCellFlagStatus(CellData.ArrayIndex, false);
+	}
+
+}
+
+//-----------------------Происходит утечка памяти----------------------------------------
+//----------------------Есть ошибка с открытием ячейки-----------------------------------
+void UCellWidget::OnLeftDoubleClick()
+{
+	GameInstance->OpenCellsNearbyIntentionally(CellData.ArrayIndex);
+}
+
+void UCellWidget::SetCellData(const FCellData &Data)
+{
+	CellData = Data;
+	SetCellBackGround();
+}
+
+void UCellWidget::OpenTheCell()
+{
+	if(!(ClosedCellSwitcher->ActiveWidgetIndex==1))
+	{
+		CellData.bClosed = false;
+		GameInstance->SetCellCloseStatus(CellData.ArrayIndex, false);
+
+		CellData.MarkedAsMine = false;
+		GameInstance->SetCellFlagStatus(CellData.ArrayIndex, false);
+	
+		ClosedCellSwitcher->SetActiveWidget(0);
+		ClosedCellSwitcher->SetVisibility(ESlateVisibility::Hidden);
+		OpenEmptyCellsNearby();
+	}
+
+	
+}
+
+void UCellWidget::OpenEmptyCellsNearby()
+{
+	
+	if(CellData.NumberOfNearMines==0 && !CellData.bHasMine)
+	{ 
+		GameInstance->OpenCellsNearbyAutomatically(CellData.ArrayIndex);
 	}
 	
 }
@@ -100,8 +153,20 @@ void UCellWidget::SetCellBackGround()
 	}
 	if (CellData.NumberOfNearMines == 0 && OpenedCellImage)
 	{
-		OpenedCellImage->SetColorAndOpacity(FLinearColor::Blue);
+		OpenedCellImage->SetColorAndOpacity(FLinearColor::White);
 		return;
 	}
 }
+
+void UCellWidget::GetMineSeekerGI()
+{
+	if (!GetWorld())
+	{
+		GameInstance = nullptr;
+	}
+
+	GameInstance = (GetWorld()->GetGameInstance<UGI_MineSeeker>());
+
+}
+
 

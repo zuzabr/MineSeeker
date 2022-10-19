@@ -15,10 +15,9 @@ enum class EMatchState : uint8
 
 
 //-----------------------Делегаты-----------------------------------------------
-
-DECLARE_MULTICAST_DELEGATE(FOnRMBClickedSignature);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangedSignature, EMatchState);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFullGridUpdateNeededSignature, bool bNeeded);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnOpenCellsSignature, TArray<int32>);
 
 
 USTRUCT(BlueprintType)
@@ -27,11 +26,13 @@ struct FCellData
 
 	GENERATED_USTRUCT_BODY()
 
-	
+		
 		bool bClosed = true;
-		bool bHasMine;
+		bool bHasMine = false;
+		bool MarkedAsMine = false;
 		int32 CellRowIndex;
 		int32 CellColumnIndex;
+		int32 ArrayIndex;
 		int32 NumberOfNearMines;
 };
 

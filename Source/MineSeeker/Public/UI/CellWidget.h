@@ -11,7 +11,7 @@ class UButton;
 class UTextBlock;
 class UImage;
 class UWidgetSwitcher;
-
+class UGI_MineSeeker;
 
 UCLASS()
 class MINESEEKER_API UCellWidget : public UUserWidget
@@ -20,19 +20,16 @@ class MINESEEKER_API UCellWidget : public UUserWidget
 
 public:
 	
-	void SetCellData(const FCellData& Data);
-	FCellData GetLvlData() const { return CellData; }
+	void SetCellData(const FCellData &Data);
+	FCellData GetCellData() const { return CellData; }
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+	void OpenTheCell();
 
-protected:
 	virtual void NativeOnInitialized() override;
-
 	
-
-	UPROPERTY(meta = (BindWidget))
-		UButton* CellButton;
-
+protected:	
+	
 	UPROPERTY(meta = (BindWidget))
 		UWidgetSwitcher* ClosedCellSwitcher;
 
@@ -56,13 +53,13 @@ private:
 
 	void OnLeftMouseClicked();
 	void OnRightMouseClicked();
+	void OnLeftDoubleClick();
+	void OpenEmptyCellsNearby();
 	void SetCellBackGround();
 	
-	FCellData CellData;
+	void GetMineSeekerGI();
+	UGI_MineSeeker *GameInstance;
 
-	
-	
-	
-	
-	
+	FCellData CellData;
+						
 };
