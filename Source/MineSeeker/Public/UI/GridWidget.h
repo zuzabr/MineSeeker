@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Zuzabr Games 2022 All Rights Reserved
 
 #pragma once
 
@@ -14,27 +14,26 @@ class UCellWidget;
 UCLASS()
 class MINESEEKER_API UGridWidget : public UUserWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	virtual void NativeOnInitialized() override;
-	void ResetFullMinesGrid();
+    virtual void NativeOnInitialized() override;
+    void ResetFullMinesGrid();
 
 protected:
-	UPROPERTY(meta = (BindWidget))
-		UUniformGridPanel* MinesGrid;
+    UPROPERTY(meta = (BindWidget))
+    UUniformGridPanel* MinesGrid;
 
-	UPROPERTY(EditdefaultsOnly, BlueprintReadWrite, Category = "UI")
-		TSubclassOf<UUserWidget> CellWidgetClass;
+    UPROPERTY(EditdefaultsOnly, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UUserWidget> CellWidgetClass;
 
 private:
-	UGI_MineSeeker* GetMineSeekerGI() const;
+    UGI_MineSeeker* GetMineSeekerGI() const;
 
-	UPROPERTY()
-		TArray<UCellWidget*> CellWidgets;
+    UPROPERTY()
+    TArray<UCellWidget*> CellWidgets;
 
-	void OnFullGridUpdateNeeded(bool bNeeded); // Создаем функцию под делегат
-	void OnCellOpen(TArray<int32> ArrayIndex);
-	
-			
+    void OnFullGridUpdateNeeded(bool bNeeded);
+    void OnCellOpen(TArray<int32> ArrayIndex);
+    void OnGameLost(EMatchState State);
 };

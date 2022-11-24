@@ -20,8 +20,8 @@ class MINESEEKER_API UCellWidget : public UUserWidget
 
 public:
 	
-	void SetCellData(const FCellData &Data);
-	FCellData GetCellData() const { return CellData; }
+	void SetCellData(FCellData* Data);
+	const FCellData* GetCellData() const { return CellData; }
 	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
 	void OpenTheCell();
@@ -57,9 +57,8 @@ private:
 	void OpenEmptyCellsNearby();
 	void SetCellBackGround();
 	
-	void GetMineSeekerGI();
 	UGI_MineSeeker *GameInstance;
 
-	FCellData CellData;
+	FCellData* CellData;
 						
 };

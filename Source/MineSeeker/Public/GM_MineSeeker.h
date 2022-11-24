@@ -7,32 +7,27 @@
 #include "MineSeekerCoreTypes.h"
 #include "GM_MineSeeker.generated.h"
 
-
 UCLASS()
 class MINESEEKER_API AGM_MineSeeker : public AGameModeBase
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	AGM_MineSeeker();
+    AGM_MineSeeker();
 
-	FOnMatchStateChangedSignature OnMatchStateChanged; // Добавление делегата
-	FOnFullGridUpdateNeededSignature OnFullGridUpdateNeeded;
-	
-	
+    FOnMatchStateChangedSignature OnMatchStateChanged;
+    FOnFullGridUpdateNeededSignature OnFullGridUpdateNeeded;
+    
 
-	
-	virtual void StartPlay() override;
-	virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
-	virtual bool ClearPause() override;
-	void OpenMainMenu();
-	void StartGame();
-
-	
+    virtual void StartPlay() override;
+    virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
+    virtual bool ClearPause() override;
+    void OpenMainMenu();
+    void StartGame();
+    void GameLost();
 
 private:
-	EMatchState MatchState = EMatchState::None;
-	void GameOver();
-	void SetMatchState(EMatchState State);
-	
+    EMatchState MatchState = EMatchState::None;
+    void GameOver();
+    void SetMatchState(EMatchState State);
 };
