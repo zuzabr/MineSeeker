@@ -19,6 +19,11 @@ void UMainMenuWidget::NativeOnInitialized()
 	{
 		QuitGameButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnQuitGame);
 	}
+
+	if (SettingsButton)
+    {
+        SettingsButton->OnClicked.AddDynamic(this, &UMainMenuWidget::OnSettingsOpen);
+    }
 	
 }
 
@@ -34,5 +39,12 @@ void UMainMenuWidget::OnStartGame()
 void UMainMenuWidget::OnQuitGame()
 {
 	UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, true);
+}
+
+void UMainMenuWidget::OnSettingsOpen()
+{
+    if (!GetWorld() || !GetWorld()->GetAuthGameMode()) return;
+    const auto GameMode = Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode());
+    GameMode->OpenSettingsMenu();
 }
 

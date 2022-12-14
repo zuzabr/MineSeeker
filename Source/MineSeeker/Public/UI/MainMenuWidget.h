@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 		UButton* QuitGameButton;
 
+	UPROPERTY(meta = (BindWidget))
+        UButton* SettingsButton;
+
 private:
 
 	UFUNCTION()
@@ -32,5 +35,8 @@ private:
 
 	UFUNCTION()
 		void OnQuitGame();
+
+	UFUNCTION()
+        void OnSettingsOpen();
 	
 };

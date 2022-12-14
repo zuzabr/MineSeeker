@@ -64,7 +64,7 @@ void UGridWidget::OnCellOpen(TArray<int32> ArrayIndex)
     {
         const auto Cell = Cast<UCellWidget>(MinesGrid->GetChildAt(Index));
         if (!(Cell->GetCellData()->bClosed)) continue;
-        Cell->OpenTheCell();
+        Cell->OpenTheCell(true);
     }
 }
 
@@ -87,6 +87,6 @@ void UGridWidget::OnGameLost(EMatchState State)
     {
         const auto Cell = Cast<UCellWidget>(MinesGrid->GetChildAt(i));
         if (!(Cell->GetCellData()->bClosed)) continue;
-        Cell->OpenTheCell();
+        Cell->OpenTheCell(false);
     }
 }

@@ -6,7 +6,7 @@
 #include "Blueprint/UserWidget.h"
 #include "GameProgressWidget.generated.h"
 
-
+class UButton;
 
 UCLASS()
 class MINESEEKER_API UGameProgressWidget : public UUserWidget
@@ -16,6 +16,12 @@ class MINESEEKER_API UGameProgressWidget : public UUserWidget
 protected:
 	virtual void NativeOnInitialized() override;
 
-	
+protected:
+    UPROPERTY(meta = (BindWidget))
+    UButton* PauseButton;
+
+private:
+    UFUNCTION()
+    void OnPauseSet();	
 	
 };

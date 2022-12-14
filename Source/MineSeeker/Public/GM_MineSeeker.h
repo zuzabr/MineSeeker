@@ -23,8 +23,10 @@ public:
     virtual bool SetPause(APlayerController* PC, FCanUnpause CanUnpauseDelegate = FCanUnpause()) override;
     virtual bool ClearPause() override;
     void OpenMainMenu();
+    void OpenSettingsMenu();
     void StartGame();
     void GameLost();
+    void GameWon();
 
 private:
     EMatchState MatchState = EMatchState::None;

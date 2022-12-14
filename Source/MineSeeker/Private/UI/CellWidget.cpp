@@ -56,12 +56,12 @@ FReply UCellWidget::NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, 
 void UCellWidget::OnLeftMouseClicked()
 {
     if (ClosedCellSwitcher->ActiveWidgetIndex == 1) return;
-    OpenTheCell();
+    OpenTheCell(true);
 }
 
 void UCellWidget::OnRightMouseClicked()
 {
-
+    
     const auto ChildrenCount = ClosedCellSwitcher->GetChildrenCount();
     const auto CurrentIndex = ClosedCellSwitcher->ActiveWidgetIndex;
 
@@ -71,19 +71,26 @@ void UCellWidget::OnRightMouseClicked()
         if ((CurrentIndex + 1) == 1)
         {
             CellData->MarkedAsMine = true;
-            // GameInstance->SetCellFlagStatus(CellData.ArrayIndex, true);
+            if (GameInstance)
+            {
+                GameInstance->ChangeRemainMinesCount(-1);
+            }
         }
         else
         {
             CellData->MarkedAsMine = false;
-            // GameInstance->SetCellFlagStatus(CellData.ArrayIndex, false);
+            if (GameInstance)
+            {
+                GameInstance->ChangeRemainMinesCount(1);
+            }
+            
         }
     }
     else
     {
         ClosedCellSwitcher->SetActiveWidgetIndex(0);
         CellData->MarkedAsMine = false;
-        // GameInstance->SetCellFlagStatus(CellData.ArrayIndex, false);
+        
     }
 }
 
@@ -99,23 +106,54 @@ void UCellWidget::SetCellData(FCellData* Data)
     SetCellBackGround();
 }
 
-void UCellWidget::OpenTheCell()
-{
-    if (!(ClosedCellSwitcher->ActiveWidgetIndex == 1))
-    {
-        CellData->bClosed = false;
-        CellData->MarkedAsMine = false;
 
+void UCellWidget::OpenTheCell(bool bCheckFlagSetup)
+{
+    // Happens only by user actions
+    if (bCheckFlagSetup && !(ClosedCellSwitcher->ActiveWidgetIndex == 1))
+    {
+        CellData->bClosed = false; //Open cell in structure
+        CellData->MarkedAsMine = false; //Remove flag from cell
+
+        ClosedCellSwitcher->SetActiveWidget(0); // Hide Closed switcher
+        ClosedCellSwitcher->SetVisibility(ESlateVisibility::Hidden);
+        OpenEmptyCellsNearby();
+
+        // Check on lost game
         if (CellData->bHasMine && GetWorld() && Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode()))
         {
             const auto GameMode = Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode());
             GameMode->GameLost();
         }
 
-        ClosedCellSwitcher->SetActiveWidget(0);
+        // Check on win the game
+        if (!(CellData->bHasMine) && GameInstance)
+        {
+            const auto bWin = GameInstance->CalculateOpenCellsNumber();
+            if (bWin && GetWorld() && Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode())) 
+            {
+                const auto GameMode = Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode());
+                GameMode->GameWon();
+            }
+        }
+    }
+
+    if (!bCheckFlagSetup)
+    {
+        CellData->bClosed = false;       // Open cell in structure
+        CellData->MarkedAsMine = false;  // Remove flag from cell
+
+        ClosedCellSwitcher->SetActiveWidget(0);  // Hide Closed switcher
         ClosedCellSwitcher->SetVisibility(ESlateVisibility::Hidden);
         OpenEmptyCellsNearby();
     }
+
+    
+}
+
+bool UCellWidget::GetCellMineInfo() const
+{
+    return CellData->bHasMine;
 }
 
 void UCellWidget::OpenEmptyCellsNearby()
@@ -135,13 +173,13 @@ void UCellWidget::SetCellBackGround()
 
         return;
     }
-    if (CellData->NumberOfNearMines > 0 && NumberOfMinesNearby)
+    if (!(CellData->bHasMine) && CellData->NumberOfNearMines > 0 && NumberOfMinesNearby)
     {
         NumberOfMinesNearby->SetText(FText::AsNumber(CellData->NumberOfNearMines));
         NumberOfMinesNearby->SetVisibility(ESlateVisibility::Visible);
         return;
     }
-    if (CellData->NumberOfNearMines == 0 && OpenedCellImage)
+    if (!(CellData->bHasMine) && (CellData->NumberOfNearMines == 0) && OpenedCellImage)
     {
         OpenedCellImage->SetColorAndOpacity(FLinearColor::White);
         return;

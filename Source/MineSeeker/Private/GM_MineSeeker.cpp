@@ -28,6 +28,11 @@ void AGM_MineSeeker::OpenMainMenu()
     SetMatchState(EMatchState::WaitingToStart);
 }
 
+void AGM_MineSeeker::OpenSettingsMenu()
+{
+    SetMatchState(EMatchState::Settings);
+}
+
 void AGM_MineSeeker::StartGame()
 {
     if (IsPaused())
@@ -67,6 +72,10 @@ bool AGM_MineSeeker::ClearPause()
 
 void AGM_MineSeeker::GameLost()
 {
-    if (MatchState == EMatchState::GameOver) return;
     SetMatchState(EMatchState::GameOver);
+}
+
+void AGM_MineSeeker::GameWon()
+{
+    SetMatchState(EMatchState::Win);
 }

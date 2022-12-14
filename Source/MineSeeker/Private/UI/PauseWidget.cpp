@@ -1,8 +1,8 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Zuzabr Games 2022 All Rights Reserved
 
 
 #include "UI/PauseWidget.h"
-#include "Gameframework/GameModeBase.h"
+#include "GM_MineSeeker.h"
 #include "Components/Button.h"
 
 void UPauseWidget::NativeOnInitialized()
@@ -19,5 +19,9 @@ void UPauseWidget::NativeOnInitialized()
 void UPauseWidget::OnClearPause()
 {
 	if (!GetWorld() || !GetWorld()->GetAuthGameMode()) return;
-	GetWorld()->GetAuthGameMode()->ClearPause();
+    const auto GameMode = Cast<AGM_MineSeeker>(GetWorld()->GetAuthGameMode());
+    if (GameMode)
+    {
+        GameMode->ClearPause();
+	}
 }

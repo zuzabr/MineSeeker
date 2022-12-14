@@ -10,15 +10,25 @@ enum class EMatchState : uint8
     WaitingToStart,
     GameOver,
     InProgress,
-    Pause
+    Pause,
+    Win,
+    Settings
     
+};
+
+UENUM(BlueprintType)
+enum class EGameDifficulty : uint8
+{
+    Easy,
+    Medium,
+    Hard,
+    Custom
 };
 
 //-------------------Custom Delegates-----------------------------------------------
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnMatchStateChangedSignature, EMatchState);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnFullGridUpdateNeededSignature, bool bNeeded);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnOpenCellsSignature, TArray<int32>);
-
 
 USTRUCT(BlueprintType)
 struct FCellData
@@ -29,10 +39,10 @@ struct FCellData
     bool bClosed = true;
     bool bHasMine = false;
     bool MarkedAsMine = false;
-    int32 CellRowIndex;
-    int32 CellColumnIndex;
-    int32 ArrayIndex;
-    int32 NumberOfNearMines;
+    int32 CellRowIndex =0;
+    int32 CellColumnIndex=0;
+    int32 ArrayIndex =0;
+    int32 NumberOfNearMines =0;
 };
 
 USTRUCT(BlueprintType)

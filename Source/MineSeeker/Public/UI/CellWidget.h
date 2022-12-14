@@ -16,49 +16,46 @@ class UGI_MineSeeker;
 UCLASS()
 class MINESEEKER_API UCellWidget : public UUserWidget
 {
-	GENERATED_BODY()
+    GENERATED_BODY()
 
 public:
-	
-	void SetCellData(FCellData* Data);
-	const FCellData* GetCellData() const { return CellData; }
-	virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
-	void OpenTheCell();
+    void SetCellData(FCellData* Data);
+    const FCellData* GetCellData() const { return CellData; }
+    virtual FReply NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    virtual FReply NativeOnMouseButtonDoubleClick(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent) override;
+    void OpenTheCell(bool bCheckFlagSetup = true);
+    UFUNCTION(BlueprintCallable)
+    bool GetCellMineInfo() const;
 
-	virtual void NativeOnInitialized() override;
-	
-protected:	
-	
-	UPROPERTY(meta = (BindWidget))
-		UWidgetSwitcher* ClosedCellSwitcher;
+    virtual void NativeOnInitialized() override;
 
-	UPROPERTY(meta = (BindWidget))
-		UTextBlock* NumberOfMinesNearby;
+protected:
+    UPROPERTY(meta = (BindWidget))
+    UWidgetSwitcher* ClosedCellSwitcher;
 
-	UPROPERTY(meta = (BindWidget))
-		UImage* ClosedEmptyCellImage;
+    UPROPERTY(meta = (BindWidget))
+    UTextBlock* NumberOfMinesNearby;
 
-	UPROPERTY(meta = (BindWidget))
-		UImage* ClosedQuestionCellImage;
+    UPROPERTY(meta = (BindWidget))
+    UImage* ClosedEmptyCellImage;
 
-	UPROPERTY(meta = (BindWidget))
-		UImage* ClosedFlagCellImage;
-	
-	UPROPERTY(meta = (BindWidget))
-		UImage* OpenedCellImage;
+    UPROPERTY(meta = (BindWidget))
+    UImage* ClosedQuestionCellImage;
+
+    UPROPERTY(meta = (BindWidget))
+    UImage* ClosedFlagCellImage;
+
+    UPROPERTY(meta = (BindWidget))
+    UImage* OpenedCellImage;
 
 private:
-	UFUNCTION(BlueprintCallable)
+    void OnLeftMouseClicked();
+    void OnRightMouseClicked();
+    void OnLeftDoubleClick();
+    void OpenEmptyCellsNearby();
+    void SetCellBackGround();
 
-	void OnLeftMouseClicked();
-	void OnRightMouseClicked();
-	void OnLeftDoubleClick();
-	void OpenEmptyCellsNearby();
-	void SetCellBackGround();
-	
-	UGI_MineSeeker *GameInstance;
+    UGI_MineSeeker* GameInstance;
 
-	FCellData* CellData;
-						
+    FCellData* CellData;
 };

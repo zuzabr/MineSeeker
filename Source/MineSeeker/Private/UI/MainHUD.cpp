@@ -13,6 +13,9 @@ void AMainHUD::BeginPlay()
     GameWidgets.Add(EMatchState::GameOver, CreateWidget<UUserWidget>(GetWorld(), GameOverWidgetClass));
     GameWidgets.Add(EMatchState::WaitingToStart, CreateWidget<UUserWidget>(GetWorld(), MainMenuWidgetClass));
     GameWidgets.Add(EMatchState::Pause, CreateWidget<UUserWidget>(GetWorld(), PauseWidgetClass));   
+    GameWidgets.Add(EMatchState::Win, CreateWidget<UUserWidget>(GetWorld(), GameWinWidgetClass));
+    GameWidgets.Add(EMatchState::Settings, CreateWidget<UUserWidget>(GetWorld(), SettingsWidgetClass));
+    
     for (auto GameWidgetPair : GameWidgets)
     {
         const auto GameWidget = GameWidgetPair.Value;
